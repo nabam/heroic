@@ -48783,8 +48783,8 @@ angular.module('_pages/docs/getting_started/compile.ngt', []).run(['$templateCac
     '    Unstable Project\n' +
     '  </h4>\n' +
     '  <p>\n' +
-    '    In order to run Heroic, you currently have to compile your own jar.\n' +
-    '    This is because the project should currently be considered unstable.\n' +
+    '    In order to run Heroic you currently have to compile your own jar.\n' +
+    '    This is because the project should still be considered unstable, and might change in the future.\n' +
     '  </p>\n' +
     '</div>\n' +
     '\n' +
@@ -48806,12 +48806,13 @@ angular.module('_pages/docs/getting_started/compile.ngt', []).run(['$templateCac
     '\n' +
     '<pre><code language="bash">\n' +
     '$ cd heroic\n' +
+    '$ tools/install-repackaged\n' +
     '$ mvn clean package\n' +
     '</code></pre>\n' +
     '\n' +
     '<p>\n' +
-    '  The previous command will generate a new .jar file, which you can use to run\n' +
-    '  Heroic through <a git-href-java="heroic-dist">com.spotify.heroic.HeroicService</a>.\n' +
+    '  The previous command will generate a new .jar file in <b>heroic-dist/target</b>, which you can\n' +
+    '  use to run Heroic through <a git-href-java="heroic-dist">com.spotify.heroic.HeroicService</a>.\n' +
     '</p>\n' +
     '\n' +
     '<pre><code language="bash">\n' +
