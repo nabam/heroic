@@ -48382,20 +48382,22 @@ angular.module('_pages/docs/config/metrics.ngt', []).run(['$templateCache', func
     '</p>\n' +
     '\n' +
     '<p>\n' +
-    '  The following is an example configuration showcasing all options.\n' +
+    '  The following is an example configuration:\n' +
     '</p>\n' +
     '\n' +
     '<codeblock language="yaml">\n' +
     'metrics:\n' +
     '  backends:\n' +
-    '    - type: cassandra\n' +
+    '    - type: datastax\n' +
     '      groups: a\n' +
     '      seeds:\n' +
     '        - localhost\n' +
-    '    - type: cassandra\n' +
+    '    - type: bigtable\n' +
     '      groups: b\n' +
-    '      seeds:\n' +
-    '        - localhost\n' +
+    '      project: my-cloud-project-1\n' +
+    '      instance: heroic-metrics\n' +
+    '      credentials:\n' +
+    '        type: default\n' +
     '  defaultBackends:\n' +
     '    - a\n' +
     '</codeblock>\n' +
@@ -48450,14 +48452,7 @@ angular.module('_pages/docs/config/metrics.ngt', []).run(['$templateCache', func
     '  </tr>\n' +
     '</table>\n' +
     '\n' +
-    '<h3>Metric Backends</h3>\n' +
-    '\n' +
-    '<p>\n' +
-    '  Heroic is capable of storing metrics in multiple different ways.\n' +
-    '  The following is a list of all available metric backends, and their configuration options.\n' +
-    '</p>\n' +
-    '\n' +
-    '<h4>Datastax Cassandra</h4>\n' +
+    '<h3 id="datastax-cassandra">Datastax Cassandra</h3>\n' +
     '\n' +
     '<table class="table">\n' +
     '  <tr>\n' +
@@ -48493,7 +48488,7 @@ angular.module('_pages/docs/config/metrics.ngt', []).run(['$templateCache', func
     '  </tr>\n' +
     '</table>\n' +
     '\n' +
-    '<h5 id="schema-ng">Next Generation Schema</h5>\n' +
+    '<h4 id="schema-ng">Next Generation Schema</h4>\n' +
     '\n' +
     '<table class="table">\n' +
     '  <tr>\n' +
@@ -48510,7 +48505,7 @@ angular.module('_pages/docs/config/metrics.ngt', []).run(['$templateCache', func
     '  The next version of the schema, built with no strings attached to previous implementations.\n' +
     '</p>\n' +
     '\n' +
-    '<h5 id="schema-legacy">Legacy Schema</h5>\n' +
+    '<h4 id="schema-legacy">Legacy Schema</h4>\n' +
     '\n' +
     '<table class="table">\n' +
     '  <tr>\n' +
@@ -48527,6 +48522,119 @@ angular.module('_pages/docs/config/metrics.ngt', []).run(['$templateCache', func
     '  The initial schema that was used since the dawn of time.\n' +
     '  It was inherited, in part, from some of the key composition utilities made available by <em>datastax</em>, making it a bit awkward to work with for other utilities.\n' +
     '</p>\n' +
+    '\n' +
+    '<h3 id="google-bigtable">Google Bigtable</h3>\n' +
+    '\n' +
+    '<codeblock language="yaml">\n' +
+    'type: bigtable\n' +
+    'project: my-cloud-project-1\n' +
+    'instance: heroic-metrics\n' +
+    'credentials:\n' +
+    '  type: default\n' +
+    '</codeblock>\n' +
+    '\n' +
+    '<table class="table">\n' +
+    '  <tr>\n' +
+    '    <td><code>type</code></td>\n' +
+    '    <td><code>"bigtable"</code></td>\n' +
+    '  </tr>\n' +
+    '  <tr>\n' +
+    '    <td><code>id</code></td>\n' +
+    '    <td>\n' +
+    '      Specify which id this backend has that is used to uniquely identify this backend.\n' +
+    '      If not specified, the id will be generated.\n' +
+    '    </td>\n' +
+    '  </tr>\n' +
+    '  <tr>\n' +
+    '    <td><code>groups</code></td>\n' +
+    '    <td>\n' +
+    '      Specify which group, or list groups, this backend should be part of.\n' +
+    '    </td>\n' +
+    '  </tr>\n' +
+    '  <tr>\n' +
+    '    <td><code>project</code></td>\n' +
+    '    <td>\n' +
+    '      Which <a href="https://cloud.google.com/storage/docs/projects">Project</a> the backend should connect to.\n' +
+    '    </td>\n' +
+    '  </tr>\n' +
+    '  <tr>\n' +
+    '    <td><code>instance</code></td>\n' +
+    '    <td>\n' +
+    '      Which <a href="https://cloud.google.com/bigtable/docs/creating-instance">Instance</a> the backend should connect to.\n' +
+    '      Defaults to <code>"heroic"</code>.\n' +
+    '    </td>\n' +
+    '  </tr>\n' +
+    '  <tr>\n' +
+    '    <td><code>table</code></td>\n' +
+    '    <td>\n' +
+    '      Which table the backend should use. Defaults to <code>"metrics"</code>.\n' +
+    '    </td>\n' +
+    '  </tr>\n' +
+    '  <tr>\n' +
+    '    <td><code>credentials</code></td>\n' +
+    '    <td>\n' +
+    '      Which credentials to use to connect.\n' +
+    '      Can be one of:\n' +
+    '\n' +
+    '      <ul>\n' +
+    '        <li><a href="#json-credentials">JSON Credentials</a></li>\n' +
+    '        <li><a href="#compute-engine-credentials">Compute Engine Credentials</a></li>\n' +
+    '      </ul>\n' +
+    '    </td>\n' +
+    '  </tr>\n' +
+    '  <tr>\n' +
+    '    <td><code>disableBulkMutations</code></td>\n' +
+    '    <td>\n' +
+    '      Disable bulk mutations.\n' +
+    '      This will cause each individual write to be performed as a single request.\n' +
+    '    </td>\n' +
+    '  </tr>\n' +
+    '  <tr>\n' +
+    '    <td><code>flushIntervalSeconds</code></td>\n' +
+    '    <td>\n' +
+    '      When bulk mutations are enabled, this is the maximum amount of time a single batch will collect data for.\n' +
+    '    </td>\n' +
+    '  </tr>\n' +
+    '  <tr>\n' +
+    '    <td><code>batchSize</code></td>\n' +
+    '    <td>\n' +
+    '      When bulk mutations are enabled, this is the maximum size of a single batch.\n' +
+    '    </td>\n' +
+    '  </tr>\n' +
+    '</table>\n' +
+    '\n' +
+    '<h4 id="compute-engine-credentials">Compute Engine Credentials</h4>\n' +
+    '\n' +
+    '<table class="table">\n' +
+    '  <tr>\n' +
+    '    <td><code>type</code></td>\n' +
+    '    <td><b>compute-engine</b></td>\n' +
+    '  </tr>\n' +
+    '</table>\n' +
+    '\n' +
+    '<h4>Default Credentials</h4>\n' +
+    '\n' +
+    '<table class="table">\n' +
+    '  <tr>\n' +
+    '    <td><code>type</code></td>\n' +
+    '    <td><b>default</b></td>\n' +
+    '  </tr>\n' +
+    '</table>\n' +
+    '\n' +
+    '<h4 id="json-credentials">JSON Credentials</h4>\n' +
+    '\n' +
+    '<table class="table">\n' +
+    '  <tr>\n' +
+    '    <td><code>type</code></td>\n' +
+    '    <td><b>json</b></td>\n' +
+    '  </tr>\n' +
+    '  <tr>\n' +
+    '    <td><code>path</code></td>\n' +
+    '    <td>\n' +
+    '      Path to credentials file to use.\n' +
+    '    </td>\n' +
+    '  </tr>\n' +
+    '</table>\n' +
     '');
 }]);
 
@@ -48724,13 +48832,12 @@ angular.module('_pages/docs/getting_started/configuration.ngt', []).run(['$templ
     '\n' +
     '<ul>\n' +
     '  <li><a ui-sref=".({\'#\': \'cassandra\'})">Configuring Cassandra</a></li>\n' +
+    '  <li><a ui-sref=".({\'#\': \'bigtable\'})">Configuring Bigtable</a></li>\n' +
     '  <li><a ui-sref=".({\'#\': \'elasticsearch\'})">Configuring Elasticsearch</a></li>\n' +
     '  <li><a ui-sref=".({\'#\': \'heroic\'})">Configuring Heroic</a></li>\n' +
     '</ul>\n' +
     '\n' +
-    '<h3 id="cassandra">\n' +
-    '  Configuring Cassandra\n' +
-    '</h3>\n' +
+    '<h3 id="cassandra">Configuring Cassandra</h3>\n' +
     '\n' +
     '<p>\n' +
     '  Heroic (by default) uses the <code>heroic</code> keyspace, which can be\n' +
@@ -48743,9 +48850,23 @@ angular.module('_pages/docs/getting_started/configuration.ngt', []).run(['$templ
     'heroic> configure\n' +
     '</code></pre>\n' +
     '\n' +
-    '<h3 id="elasticsearch">\n' +
-    '  Configuring ElasticSearch\n' +
-    '</h3>\n' +
+    '<h3 id="bigtable">Configuring Bigtable</h3>\n' +
+    '\n' +
+    '<p>\n' +
+    '  If you want to use Google Cloud Bigtable to store metrics, you can configure it with the following command.\n' +
+    '</p>\n' +
+    '\n' +
+    '<pre><code language="bash">\n' +
+    'tools/heroic-shell -P bigtable \\\n' +
+    '  -X bigtable.project=&lt;project&gt; \\\n' +
+    '  -X bigtable.instance=&lt;instance&gt; \\\n' +
+    '  -X bigtable.credentials=&lt;default&gt; \\\n' +
+    '  -X bigtable.configure\n' +
+    '...\n' +
+    'heroic> configure\n' +
+    '</code></pre>\n' +
+    '\n' +
+    '<h3 id="elasticsearch">Configuring ElasticSearch</h3>\n' +
     '\n' +
     '<p>\n' +
     '  Elasticsearch is also configured using the <a ui-sref="^.^.shell">Heroic shell</a>.\n' +
@@ -48858,11 +48979,16 @@ angular.module('_pages/docs/getting_started/configuration.ngt', []).run(['$templ
     '    nodes:\n' +
     '      - "grpc://localhost"\n' +
     '\n' +
+    '# This showcases two different metric backends, choose which one you want.\n' +
     'metrics:\n' +
     '  backends:\n' +
     '    - type: datastax\n' +
     '      seeds:\n' +
     '        - localhost\n' +
+    '    - type: bigtable\n' +
+    '      instance: heroic\n' +
+    '      credentials:\n' +
+    '        type: default\n' +
     '\n' +
     'metadata:\n' +
     '  backends:\n' +
@@ -48878,6 +49004,10 @@ angular.module('_pages/docs/getting_started/configuration.ngt', []).run(['$templ
     '        seeds:\n' +
     '          - localhost\n' +
     '</codeblock>\n' +
+    '\n' +
+    '<p>\n' +
+    '  For more details in how the service can be configured, see the <a ui-sref="^.^.config">Configuration Section</a>.\n' +
+    '</p>\n' +
     '\n' +
     '<h4 id="heroic-data-node">Consumer Node</h4>\n' +
     '\n' +
