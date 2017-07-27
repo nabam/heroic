@@ -48860,7 +48860,7 @@ angular.module('_pages/docs/getting_started/configuration.ngt', []).run(['$templ
     'tools/heroic-shell -P bigtable \\\n' +
     '  -X bigtable.project=&lt;project&gt; \\\n' +
     '  -X bigtable.instance=&lt;instance&gt; \\\n' +
-    '  -X bigtable.credentials=&lt;default&gt; \\\n' +
+    '  -X bigtable.credentials=default \\\n' +
     '  -X bigtable.configure\n' +
     '...\n' +
     'heroic> configure\n' +
