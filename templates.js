@@ -3722,8 +3722,8 @@ angular.module('_pages/docs/config/metrics.ngt', []).run(['$templateCache', func
     '      Can be one of:\n' +
     '\n' +
     '      <ul>\n' +
-    '        <li><a href="#json-credentials">JSON Credentials</a></li>\n' +
-    '        <li><a href="#compute-engine-credentials">Compute Engine Credentials</a></li>\n' +
+    '        <li><a ui-sref="{\'#\':\'json-credentials\'}">JSON Credentials</a></li>\n' +
+    '        <li><a ui-sref="{\'#\':\'compute-engine-credentials\'}">Compute Engine Credentials</a></li>\n' +
     '      </ul>\n' +
     '    </td>\n' +
     '  </tr>\n' +
