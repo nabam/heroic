@@ -44915,6 +44915,10 @@ angular.module('_pages/docs.ngt', []).run(['$templateCache', function($templateC
     '          <li ui-sref-active="active">\n' +
     '            <a ui-sref="docs.config.features">Features</a>\n' +
     '          </li>\n' +
+    '\n' +
+    '          <li ui-sref-active="active">\n' +
+    '            <a ui-sref="docs.config.query_logging">Query logging</a>\n' +
+    '          </li>\n' +
     '        </ul>\n' +
     '      </li>\n' +
     '\n' +
@@ -45330,6 +45334,12 @@ angular.module('_pages/docs/config.ngt', []).run(['$templateCache', function($te
     '  This section documents how common Elasticsearch connections are configured.\n' +
     '  They are typically used in metadata and suggestion backends that uses\n' +
     '  Elasticsearch.\n' +
+    '</p>\n' +
+    '\n' +
+    '<h4><a ui-sref="^.query_logging">Query logging</a></h4>\n' +
+    '\n' +
+    '<p>\n' +
+    '  This section documents how to configure query logging. I.e. detailed logging of internal Heroic state at different stages of query processing.\n' +
     '</p>\n' +
     '\n' +
     '<p class="next">\n' +
@@ -48638,6 +48648,151 @@ angular.module('_pages/docs/config/metrics.ngt', []).run(['$templateCache', func
     '');
 }]);
 
+angular.module('_pages/docs/config/query_logging.ngt', []).run(['$templateCache', function($templateCache) {
+  $templateCache.put('_pages/docs/config/query_logging.ngt',
+    '<h2>Query Logging Configuration</h2>\n' +
+    '\n' +
+    '<p>\n' +
+    '  This section documents how to configure query logging. I.e. detailed logging of internal Heroic state at different stages of query processing.\n' +
+    '</p>\n' +
+    '\n' +
+    '<h3>Configuration file</h3>\n' +
+    '\n' +
+    '<p>\n' +
+    '  Query Logging configuration is located in the <code>queryLogging</code> section of the configuration.\n' +
+    '</p>\n' +
+    '\n' +
+    '<p>\n' +
+    '  A typical configuration looks something like this.\n' +
+    '</p>\n' +
+    '\n' +
+    '<codeblock language="yaml">\n' +
+    'queryLogging:\n' +
+    '  type: slf4j\n' +
+    '  name: "com.spotify.heroic.query_logging"\n' +
+    '</codeblock>\n' +
+    '\n' +
+    '<h4>Field definitions</h4>\n' +
+    '\n' +
+    '<codeblock language="yaml">\n' +
+    'type: slf4j\n' +
+    '</codeblock>\n' +
+    '\n' +
+    '<p>\n' +
+    '  Defines which type of logger that should be used for query logging. Currently only supports \'slf4j\'. Without this line, query logging is disabled.\n' +
+    '</p>\n' +
+    '\n' +
+    '<codeblock language="yaml">\n' +
+    'name: "com.spotify.heroic.query_logging"\n' +
+    '</codeblock>\n' +
+    '\n' +
+    '<p>\n' +
+    '  Defines the Slf4j logger to use when logging. A matching logger needs to be defined in the Slf4j configuration file to actually get some output.\n' +
+    '</p>\n' +
+    '\n' +
+    '\n' +
+    '<h3>Contextual information</h3>\n' +
+    '\n' +
+    '<p>\n' +
+    '  It\'s possible to supply contextual information in the query. This information will then be included in the query log, to ease mapping of performed query to the query log output.\n' +
+    '</p>\n' +
+    '\n' +
+    '<p>\n' +
+    '  Add the following clientContext snippet to the query:\n' +
+    '</p>\n' +
+    '\n' +
+    '<codeblock language="yaml">\n' +
+    '{\n' +
+    '  "clientContext": {\n' +
+    '    "dashboardId": "my-system-metrics",\n' +
+    '    "user": "my-user"\n' +
+    '  }\n' +
+    '  "filter": ...\n' +
+    '}\n' +
+    '</codeblock>\n' +
+    '\n' +
+    '<p>\n' +
+    '  You\'ll get the following output in the query log:\n' +
+    '</p>\n' +
+    '\n' +
+    '<codeblock language="yaml">\n' +
+    '{\n' +
+    '  "component": ...,\n' +
+    '  "queryId": "ed6fe51c-afba-4320-a859-a88795c15175",\n' +
+    '  "clientContext": {\n' +
+    '    "dashboardId": "my-system-metrics",\n' +
+    '    "user": "my-user"\n' +
+    '  },\n' +
+    '  "type": ...,\n' +
+    '  "data": ...\n' +
+    '}\n' +
+    '</codeblock>\n' +
+    '\n' +
+    '\n' +
+    '<h3>Query log output</h3>\n' +
+    '\n' +
+    '<p>\n' +
+    '  Each successful query will result in several output entries in the query log. Entries from different stages of the query. Example output:\n' +
+    '</p>\n' +
+    '\n' +
+    '<codeblock language="yaml">\n' +
+    '{\n' +
+    '  "component": ...,\n' +
+    '  "queryId": "ed6fe51c-afba-4320-a859-a88795c15175",\n' +
+    '  "clientContext": {\n' +
+    '    "dashboardId": "my-system-metrics",\n' +
+    '    "user": "my-user"\n' +
+    '  },\n' +
+    '  "type": ...,\n' +
+    '  "data": ...\n' +
+    '}\n' +
+    '</codeblock>\n' +
+    '\n' +
+    '<h4>Field definitions</h4>\n' +
+    '\n' +
+    '<codeblock language="yaml">\n' +
+    '  "component": ...\n' +
+    '</codeblock>\n' +
+    '\n' +
+    '<p>\n' +
+    '  Specifies the internal component in Heroic that outputs this query log output.\n' +
+    '</p>\n' +
+    '\n' +
+    '<codeblock language="yaml">\n' +
+    '  "queryId": ...\n' +
+    '</codeblock>\n' +
+    '\n' +
+    '<p>\n' +
+    '  Generated id that is unique for this particular query. Can be used to group query log entries together. The queryId is also returned in the final query response.\n' +
+    '</p>\n' +
+    '\n' +
+    '<codeblock language="yaml">\n' +
+    '  "clientContext": ...\n' +
+    '</codeblock>\n' +
+    '\n' +
+    '<p>\n' +
+    '  The contextual information supplied by user. See the Contextual Information section above.\n' +
+    '</p>\n' +
+    '\n' +
+    '<codeblock language="yaml">\n' +
+    '  "type": ...\n' +
+    '</codeblock>\n' +
+    '\n' +
+    '<p>\n' +
+    '  Specifies the query stage at which this particular query log entry was generated.\n' +
+    '</p>\n' +
+    '\n' +
+    '<codeblock language="yaml">\n' +
+    '  "data": ...\n' +
+    '</codeblock>\n' +
+    '\n' +
+    '<p>\n' +
+    '  Contains data relevant to this query stage. This might for example be the original query, a partial response or the final response.\n' +
+    '</p>\n' +
+    '\n' +
+    '');
+}]);
+
 angular.module('_pages/docs/config/shell_server.ngt', []).run(['$templateCache', function($templateCache) {
   $templateCache.put('_pages/docs/config/shell_server.ngt',
     '<h2>Shell Server Configuration</h2>\n' +
@@ -50605,7 +50760,8 @@ Prism.languages.ts = {
     '_pages/docs/config/elasticsearch_connection.ngt',
     '_pages/docs/config/shell_server.ngt',
     '_pages/docs/config/consumer.ngt',
-    '_pages/docs/config/features.ngt'
+    '_pages/docs/config/features.ngt',
+    '_pages/docs/config/query_logging.ngt'
   ]);
 
   function DocumentationCtrl($scope) {
@@ -50711,6 +50867,10 @@ Prism.languages.ts = {
       .state('docs.config.features', {
         url: '/features',
         templateUrl: '_pages/docs/config/features.ngt'
+      })
+      .state('docs.config.query_logging', {
+        url: '/query_logging',
+        templateUrl: '_pages/docs/config/query_logging.ngt'
       });
   }]);
 })();
